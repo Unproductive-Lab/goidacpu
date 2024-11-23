@@ -4,6 +4,21 @@ import psutil as psu
 from datetime import datetime,timedelta
 import asyncio
 import cpuinfo
+import GPUtil
+global gpuspec
+gpuspec = GPUtil.getGPUs()
+class gpup(ft.Text): #Я ненавижу нахуй асинхрон
+    def did_mount(self):
+        self.running=True
+        self.page.run_task(self.update_cpup)
+    def will_unmount(self): 
+        self.running=False
+    
+    async def update_cpup(self):
+        while True:
+            self.value=str(gpuspec[0].load*100) + " %" 
+            self.update() 
+            await asyncio.sleep(1)
 
 class cpup(ft.Text): #Я ненавижу нахуй асинхрон
     def did_mount(self):
@@ -92,6 +107,13 @@ def main(page: ft.Page):
     page.window.resizable=False
     page.window.maximizable=False
     a=psu.cpu_freq(percpu=False)
+
+    #gpuspec = GPUtil.getGPUs()
+    gpus = len(gpuspec)
+    if gpus > 1:
+        secondone = 1
+    else: secondone=0
+
     t = ft.Tabs(
         selected_index=0,
         animation_duration=500,
@@ -200,12 +222,110 @@ def main(page: ft.Page):
                 ), ])         #---------Вставляй виджеты сюда
             ),
             ft.Tab(
-                text="Tab 3",
-                icon=ft.icons.SETTINGS,
-                content=ft.Column(
-                    [
-
+                
+                text="Видеокарта", 
+                content=ft.Tabs(selected_index=0,animation_duration=500,
+                                tabs=[
+                                    ft.Tab(
+                                        text='1',visible=gpus>0,
+                                         content=ft.Column([ft.DataTable(
+                    columns=[
+                        ft.DataColumn(ft.Text("Характеристика")),
+                        ft.DataColumn(ft.Text("Значение")),
+                    ],
+                    rows=[
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Имя GPU')),
+                                ft.DataCell(ft.Text(gpuspec[0].name)),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Нагрузка GPU')),
+                                ft.DataCell(gpup(str(gpuspec[0].load*100)+" %"))
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Температура')),
+                                ft.DataCell(ft.Text(str(gpuspec[0].temperature)+ " °C")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Всего памяти')),
+                                ft.DataCell(ft.Text(str(gpuspec[0].memoryTotal) + " MB, " + str(gpuspec[0].memoryTotal // 1000) + " GB")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Занятой памяти')),
+                                ft.DataCell(ft.Text(str(gpuspec[0].memoryUsed) + " MB, " + str(gpuspec[0].memoryUsed // 1000) + " GB")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('GPU UUID')),
+                                ft.DataCell(ft.Text(str(gpuspec[0].uuid))),
+                            ]
+                        ),
                     ]
+                ),ft.Container(ft.Text('[C] Unproductive.',text_align=ft.TextAlign.RIGHT),alignment=ft.alignment.bottom_right) ])
+                                    ),
+
+                                    ft.Tab(
+                                        text='2',visible=gpus>1,
+                                         content=ft.Column([ft.DataTable(
+                    columns=[
+                        ft.DataColumn(ft.Text("Характеристика")),
+                        ft.DataColumn(ft.Text("Значение")),
+                    ],
+                    rows=[
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Имя GPU')),
+                                ft.DataCell(ft.Text(gpuspec[secondone].name)),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Нагрузка GPU')),
+                                ft.DataCell(gpup(str(gpuspec[secondone].load*100)+" %"))
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Температура')),
+                                ft.DataCell(ft.Text(str(gpuspec[secondone].temperature)+ " °C")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Всего памяти')),
+                                ft.DataCell(ft.Text(str(gpuspec[secondone].memoryTotal) + " MB, " + str(gpuspec[secondone].memoryTotal // 1000) + " GB")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Занятой памяти')),
+                                ft.DataCell(ft.Text(str(gpuspec[secondone].memoryUsed) + " MB, " + str(gpuspec[secondone].memoryUsed // 1000) + " GB")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('GPU UUID')),
+                                ft.DataCell(ft.Text(str(gpuspec[secondone].uuid))),
+                            ]
+                        ),
+                    ]
+                ),ft.Container(ft.Text('[C] Unproductive.',text_align=ft.TextAlign.RIGHT),alignment=ft.alignment.bottom_right) ])
+                                    ),
+                                    
+
+                                    
+                                ]
+                    
                 )               
             ),
 
