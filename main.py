@@ -5,8 +5,10 @@ from datetime import datetime,timedelta
 import asyncio
 import cpuinfo
 import GPUtil
+
 global gpuspec
 gpuspec = GPUtil.getGPUs()
+
 class gpup(ft.Text): #Я ненавижу нахуй асинхрон
     def did_mount(self):
         self.running=True
@@ -113,7 +115,7 @@ def main(page: ft.Page):
     if gpus > 1:
         secondone = 1
     else: secondone=0
-
+#ГОЙДААААААААААААААААААААААААААА!
     t = ft.Tabs(
         selected_index=0,
         animation_duration=500,
