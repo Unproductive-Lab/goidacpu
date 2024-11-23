@@ -107,8 +107,8 @@ def main(page: ft.Page):
     page.window.resizable=False
     page.window.maximizable=False
     a=psu.cpu_freq(percpu=False)
-
-    #gpuspec = GPUtil.getGPUs()
+    swap = psu.swap_memory()
+    svmem = psu.virtual_memory()
     gpus = len(gpuspec)
     if gpus > 1:
         secondone = 1
@@ -329,6 +329,53 @@ def main(page: ft.Page):
                 )               
             ),
 
+            ft.Tab(text='ОЗУ',content=ft.Column([ft.DataTable(
+                columns=[
+                        ft.DataColumn(ft.Text("Характеристика")),
+                        ft.DataColumn(ft.Text("Значение")),
+                    ],
+                rows=[
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Размер ОЗУ')),
+                                ft.DataCell(ft.Text(str(svmem.total//1024//1024//1000) + " ГБ // Точно : " + str(svmem.total))),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Доступно ОЗУ')),
+                                ft.DataCell(ft.Text(str(svmem.available//1024//1024//1000) + " ГБ // Точно : " + str(svmem.available)))
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('% ОЗУ')),
+                                ft.DataCell(ft.Text(str(svmem.percent)+" %")),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Размер SWAP')),
+                                ft.DataCell(ft.Text(str(swap.total//1024//1024//1000) + " ГБ // Точно : " + str(swap.total))),
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('Доступно SWAP')),
+                                ft.DataCell(ft.Text(str(swap.free//1024//1024//1000) + " ГБ // Точно : " + str(swap.free)))
+                            ]
+                        ),
+                        ft.DataRow(
+                            cells=[
+                                ft.DataCell(ft.Text('% SWAP')),
+                                ft.DataCell(ft.Text(str(swap.percent)+" %")),
+                            ]
+                        ),
+                    ]
+            )])),
+        
+            
+        
         ],
         expand=1,
     
