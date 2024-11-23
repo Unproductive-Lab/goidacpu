@@ -5,6 +5,14 @@ from datetime import datetime,timedelta
 import asyncio
 import cpuinfo
 
+def generatequery(query:str):
+    rquery = {
+        'keyword': query, # product name or version number to search 
+        'category': '',      # product category to search (e.g. 'Smartphones', 'Tablets', or leave empty to search all categories)
+        'page': 0                # page number to fetch results from
+    }
+    return rquery
+
 class cpup(ft.Text): #Я ненавижу нахуй асинхрон
     def did_mount(self):
         self.running=True
@@ -19,6 +27,34 @@ class cpup(ft.Text): #Я ненавижу нахуй асинхрон
             self.update() # И почему теперь он может апдейтиться, а внизу кода не может????
             await asyncio.sleep(1)
 
+#Я знаю что это ужасная имплементация, и Бог простит меня за то, что я собираюсь сделать, но я сижу третью ночь на Да Хун Пао, и я хочу чтобы программа страдала за меня
+
+#За сим...
+#ВЫПУСКАЙТЕ ЯДРА!!!!!!!!!!!
+#ГОЙДААААААААААААААААААААААААААА!
+
+'''class core1(ft.Text):
+    global corecount 
+    corecount= len(psu.cpu_percent(interval=1,percpu=True))
+    def did_mount(self):
+        self.running=True
+        self.page.run_task(self.update_cpup)
+    def will_unmount(self):
+        self.running=False
+    
+    async def update_cpup(self):
+        while True:
+            finalstr = ''
+            for i in range(corecount):
+                finalstr += " " + str(psu.cpu_percent(interval=1,percpu=True)[i]) + " % "
+            self.value=finalstr 
+            self.update()
+            await asyncio.sleep(0.5)
+'''
+#Окей я знал что это хуёвая имплементация, но чтоб настолько...
+#Пока нигде не юзаем, потом придумаем получше
+
+
 class runclock(ft.Text):
     def did_mount(self):
         self.running=True
@@ -30,7 +66,7 @@ class runclock(ft.Text):
         while True:
             self.value=timedelta(seconds=datetime.now().timestamp()-psu.boot_time())
             self.update() # см. выше
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.4)
 
 class ramusage(ft.Text):
     def did_mount(self):
@@ -43,7 +79,7 @@ class ramusage(ft.Text):
         while True:
             self.value=str(psu.virtual_memory()[2]) + " %" + "       Исп. " + str(round(psu.virtual_memory()[3]/1000000000,2)) + " ГБ"
             self.update() # см. выше
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.3)
 
 class cpuclock(ft.Text):
     def did_mount(self):
@@ -56,20 +92,22 @@ class cpuclock(ft.Text):
         while True:
             self.value=str(psu.cpu_freq(percpu=False)[0])
             self.update() # см. выше
-            await asyncio.sleep(1)
+            await asyncio.sleep(0.2)
 
 def main(page: ft.Page):
-    #cpup = ft.Text(psu.cpu_percent())
-    #timeee=ft.Text()
+    page.window.height=500
+    page.window.width=510
+    page.window.resizable=False
+    page.window.maximizable=False
     a=psu.cpu_freq(percpu=False)
     t = ft.Tabs(
-        selected_index=1,
+        selected_index=0,
         animation_duration=500,
         tabs=[
             ft.Tab(
                 text="Общее",
                 icon=ft.icons.COMPUTER,
-                content=ft.DataTable(
+                content=ft.Column([ft.DataTable(
                     columns=[
                         ft.DataColumn(ft.Text("Характеристика")),
                         ft.DataColumn(ft.Text("Значение")),
@@ -112,12 +150,12 @@ def main(page: ft.Page):
                             ]
                         ),
                     ]
-                )
+                ),ft.Container(ft.Text('[C] Unproductive.',text_align=ft.TextAlign.RIGHT),alignment=ft.alignment.bottom_right) ]) #---------Вставляй виджеты сюда
             ),
             ft.Tab(
                 text="ЦП",
                 
-                content=ft.DataTable(
+                content=ft.Column([ft.DataTable(
                     columns=[
                         ft.DataColumn(ft.Text("Характеристика")),
                         ft.DataColumn(ft.Text("Значение")),
@@ -167,12 +205,16 @@ def main(page: ft.Page):
                             ]
                         ),
                     ]
-                )
+                ), ])         #---------Вставляй виджеты сюда
             ),
             ft.Tab(
                 text="Tab 3",
                 icon=ft.icons.SETTINGS,
-                content=ft.Text(""),               
+                content=ft.Column(
+                    [
+
+                    ]
+                )               
             ),
 
         ],
