@@ -5,14 +5,6 @@ from datetime import datetime,timedelta
 import asyncio
 import cpuinfo
 
-def generatequery(query:str):
-    rquery = {
-        'keyword': query, # product name or version number to search 
-        'category': '',      # product category to search (e.g. 'Smartphones', 'Tablets', or leave empty to search all categories)
-        'page': 0                # page number to fetch results from
-    }
-    return rquery
-
 class cpup(ft.Text): #Я ненавижу нахуй асинхрон
     def did_mount(self):
         self.running=True
