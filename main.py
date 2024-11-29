@@ -63,6 +63,7 @@ class cpup(ft.Text): #Я ненавижу нахуй асинхрон
 #Окей я знал что это хуёвая имплементация, но чтоб настолько...
 #Пока нигде не юзаем, потом придумаем получше
 
+## TODO : Сделать универсальный динамический класс (я пытался)
 
 class runclock(ft.Text):
     def did_mount(self):
@@ -73,11 +74,11 @@ class runclock(ft.Text):
 
     async def update_clck(self):
         while True:
-            self.value=timedelta(seconds=datetime.now().timestamp()-psu.boot_time())
+            self.value=timedelta(seconds=datetime.now().timestamp()-psu.boot_time()) ## часы 
             self.update() # см. выше
             await asyncio.sleep(0.4)
 
-class ramusage(ft.Text):
+class ramusage(ft.Text): ## Оперативка
     def did_mount(self):
         self.running=True
         self.page.run_task(self.update_clck)
@@ -352,7 +353,7 @@ def main(page: ft.Page):
                         ft.DataRow(
                             cells=[
                                 ft.DataCell(ft.Text('% ОЗУ')),
-                                ft.DataCell(ft.Text(str(svmem.percent)+" %")),
+                                ft.DataCell(ramusage(psu.virtual_memory()[2])),
                             ]
                         ),
                         ft.DataRow(
