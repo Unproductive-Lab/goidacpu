@@ -85,6 +85,7 @@ class ramusage(ft.Text): ## Оперативка
     def will_unmount(self):
         self.running=False
 
+    
     async def update_clck(self):
         while True:
             self.value=str(psu.virtual_memory()[2]) + " %" + "       Исп. " + str(round(psu.virtual_memory()[3]/1000000000,2)) + " ГБ"
